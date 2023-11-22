@@ -49,6 +49,12 @@
     background-color: #0056b3;
     border-color: #0056b3;
   }
+
+  .actions{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
   
 /* Styles for the modal overlay */
 .modal-overlay {

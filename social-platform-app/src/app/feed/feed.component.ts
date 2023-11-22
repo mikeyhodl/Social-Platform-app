@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { PostFeedComponent } from '../post-feed/post-feed.component';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-feed',
@@ -13,7 +14,7 @@ import { PostFeedComponent } from '../post-feed/post-feed.component';
 export class FeedComponent implements OnInit, OnDestroy {
 
   posts: any[] = [];
-  postsPerPage = 5;
+  postsPerPage = 4;
   currentPage = 1;
   totalPages = 0;
   postsSubscription: Subscription | undefined;
@@ -24,7 +25,7 @@ export class FeedComponent implements OnInit, OnDestroy {
   postId = 1; 
   startPayment:boolean=false
 
-  constructor(private postService: PostService,private dialog: MatDialog, private authService: AuthService,) { }
+  constructor(private postService: PostService,private notificationService:NotificationService,private dialog: MatDialog, private authService: AuthService,) { }
 
 
   
@@ -81,7 +82,7 @@ export class FeedComponent implements OnInit, OnDestroy {
           this.currentPage++;
           this.updateDisplayedPosts();
         } else {
-          alert('Please log in to see more posts.')
+          this.notificationService.showError('Login To see More Posts');
         }
       } else if (userAccessLevel === 'free') {
         if (this.currentPage * this.postsPerPage < 20) {
@@ -89,6 +90,7 @@ export class FeedComponent implements OnInit, OnDestroy {
           this.updateDisplayedPosts();
         } else {
           this.startPayment=true
+          this.notificationService.showError('Upgrade To see More Post');
           // console.log('Payment needed for more posts.');
           // alert('Payment needed for more posts.')
 
