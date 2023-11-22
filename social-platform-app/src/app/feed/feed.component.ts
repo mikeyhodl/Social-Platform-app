@@ -1,7 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PostService } from '../services/post.service';
 import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { PostFeedComponent } from '../post-feed/post-feed.component';
 
 @Component({
   selector: 'app-feed',
@@ -9,6 +11,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./feed.component.scss']
 })
 export class FeedComponent implements OnInit, OnDestroy {
+
   posts: any[] = [];
   postsPerPage = 5;
   currentPage = 1;
@@ -16,9 +19,12 @@ export class FeedComponent implements OnInit, OnDestroy {
   postsSubscription: Subscription | undefined;
   loggedInUser: any | undefined;
   isLogedIn:boolean=false;
+  totalComments = 0;
+  totalLikes = 0;
+  postId = 1; 
+  startPayment:boolean=false
 
-
-  constructor(private postService: PostService, private authService: AuthService) { }
+  constructor(private postService: PostService,private dialog: MatDialog, private authService: AuthService,) { }
 
 
   
@@ -27,34 +33,22 @@ export class FeedComponent implements OnInit, OnDestroy {
       if (user && user.id) {
         this.loggedInUser = user;
         this.isLogedIn=true
-        console.log('User logged in', this.loggedInUser);
+        // console.log('User logged in', this.loggedInUser);
         const userAccessLevel = this.authService.getUserAccessLevel(user.id);
-        console.log(`User access level: ${userAccessLevel}`);
+        // console.log(`User access level: ${userAccessLevel}`);
         this.fetchPosts(userAccessLevel);
       } else {
         // console.log('User not logged in.');
-        // For unauthenticated users, fetch the first 20 posts
         this.fetchPosts('unauthenticated');
       }
     });
-  }
-  
-  
-  
-  
 
-  // loginAndFetchPosts(usernameOrEmail: string, password: string): void {
-  //   this.authService.login(usernameOrEmail, password).subscribe((loggedIn: boolean) => {
-  //     if (loggedIn) {
-  //       this.loggedInUser = this.authService.loggedInUser;
-  //       const userAccessLevel = this.authService.getUserAccessLevel();
-  //       console.log(`User access level: ${userAccessLevel}`); 
-  //       this.fetchPosts(userAccessLevel);
-  //     } else {
-  //       console.log('Invalid credentials');
-  //     }
-  //   });
-  // }
+    this.postService.getCommentsForPost(this.postId).subscribe(comments => {
+      this.totalComments = comments.length; 
+      this.totalLikes=5;
+    });
+  }
+
 
 
   fetchPosts(userAccessLevel: 'free' | 'premium' | 'unauthenticated'): void {
@@ -77,13 +71,11 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
-      let userAccessLevel = 'unauthenticated'; // Default for unauthenticated users
+      let userAccessLevel = 'unauthenticated'; 
   
       if (this.loggedInUser) {
         userAccessLevel = this.authService.getUserAccessLevel(this.loggedInUser.id);
       }
-  
-      // Check for unauthenticated or free users to view up to 20 posts
       if (userAccessLevel === 'unauthenticated') {
         if (this.currentPage * this.postsPerPage < 20) {
           this.currentPage++;
@@ -96,8 +88,9 @@ export class FeedComponent implements OnInit, OnDestroy {
           this.currentPage++;
           this.updateDisplayedPosts();
         } else {
-          console.log('Payment needed for more posts.');
-          alert('Payment needed for more posts.')
+          this.startPayment=true
+          // console.log('Payment needed for more posts.');
+          // alert('Payment needed for more posts.')
 
         }
       } else if (userAccessLevel === 'premium') {
@@ -120,6 +113,32 @@ export class FeedComponent implements OnInit, OnDestroy {
   updateDisplayedPosts(): void {
     this.postService.getAllPosts().subscribe(posts => {
       this.posts = this.getPostsForPage(this.currentPage, posts);
+    });
+  }
+  likePost(postId: any) {
+    this.totalLikes+=1;
+  }
+  commentOnPost(arg0: any) {
+  throw new Error('Method not implemented.');
+  }
+  cancelUpgrade(): void {
+    // Set startPayment to false to close the modal
+    this.startPayment = false;
+  }
+  logut(){
+    this.isLogedIn=false
+  }
+  openPostDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '700px'; // Adjust the width of the modal
+    dialogConfig.maxWidth = '90vw'; // Maximum width
+    dialogConfig.height='60vh';
+    dialogConfig.data = { /* If passing data */ };
+
+    const dialogRef = this.dialog.open(PostFeedComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Do something on modal close if needed
     });
   }
 

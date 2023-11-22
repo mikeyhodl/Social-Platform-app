@@ -1,0 +1,86 @@
+/* Adjust the styles based on your design preferences */
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .card-subtitle {
+    font-size: 14px;
+    color: #888;
+  }
+  
+  .card-title {
+    font-size: 24px;
+    margin-top: 10px;
+  }
+  
+  .card-text {
+    color: #333;
+  }
+  
+  .post-interactions {
+    margin-top: 15px;
+  }
+  
+  .like-button,
+  .comment-button {
+    margin-right: 10px;
+    color: #555;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+  
+/* Styles for the modal overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure the modal is on top of everything */
+  }
+  
+  /* Styles for the modal itself */
+  .modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    /* Add more styles for positioning, sizing, etc. */
+  }
+  
+  /* Adjust the content within the modal */
+  .modal-content {
+    /* Define styles for the content within the modal */
+    /* For example: */
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+ 
+  
