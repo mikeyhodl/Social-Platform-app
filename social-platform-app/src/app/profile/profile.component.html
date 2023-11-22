@@ -1,1 +1,40 @@
-<p>profile works!</p>
+<div class="container">
+    <h2>User Profile</h2>
+    <div class="profile-details">
+    <div class="profile-picture">
+        <img [src]="userProfile.profilePicture" alt="Profile Picture">
+      </div>
+    <div>
+      <p><strong>Name:</strong> {{ userProfile.name }}</p>
+      <p><strong>Email:</strong> {{ userProfile.email }}</p>
+      <p><strong>phone:</strong> {{ userProfile.phone }}</p>
+      <p><strong>company:</strong> {{ userProfile.company}}</p>
+      <p><strong>website:</strong> {{ userProfile.website }}</p>
+    </div>
+    </div>
+   <!-- User's posts -->
+  <div *ngIf="userPosts.length > 0">
+    <h3>My Posts</h3>
+    <div *ngFor="let post of userPosts" class="card mt-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text">{{ post.body }}</p>
+        <p class="card-subtitle text-muted">Posted by User ID: {{ post.userId }}</p>
+        <div class="post-interactions">
+            <!-- Like button -->
+            <button class="btn btn-link like-button"  title="Like">
+              <i class="fas fa-heart"></i> 106
+            </button>
+            <!-- Comment button -->
+            <button class="btn btn-link comment-button" title="Comment">
+              <i class="fas fa-comment"></i> {{totalComments}}
+            </button>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="userPosts.length === 0">
+    <p>No posts found for this user.</p>
+  </div>
+  </div>
+  

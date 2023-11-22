@@ -20,7 +20,7 @@ export class LoginComponent {
         if (loggedIn) {
           this.router.navigate(['/feed']);
         } else {
-          console.log('Invalid credentials');
+          alert('Invalid credentials');
         }
       });
   }

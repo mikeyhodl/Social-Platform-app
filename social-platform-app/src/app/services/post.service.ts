@@ -18,5 +18,13 @@ export class PostService {
   getAllPosts(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
+  getUserPostsByUserId(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?userId=${userId}`);
+  }
+
+  getCommentsForPost(postId: number): Observable<any[]> {
+    const url = `https://jsonplaceholder.typicode.com/posts/${postId}/comments`;
+    return this.http.get<any[]>(url);
+  }
 
 }
