@@ -18,6 +18,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar'; // Import MatSnackBarModule
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommentsComponent } from './comments/comments.component';
+import { FollowersComponent } from './followers/followers.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FollowingComponent,
     UpgradeUserComponent,
     PostFeedComponent,
+    CommentsComponent,
+    FollowersComponent,
 
     
   ],

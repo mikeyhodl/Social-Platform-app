@@ -29,6 +29,11 @@
   .card-text {
     color: #333;
   }
+  .cards{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
   
   .post-interactions {
     margin-top: 15px;
@@ -48,6 +53,20 @@
   .btn-primary:hover {
     background-color: #0056b3;
     border-color: #0056b3;
+  }
+
+  .actions{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .Tabs{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    button{
+      width: 100px;
+    }
   }
   
 /* Styles for the modal overlay */

@@ -4,6 +4,10 @@ import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { PostFeedComponent } from '../post-feed/post-feed.component';
+import { NotificationService } from '../notification.service';
+import { FollowingComponent } from '../following/following.component';
+import { BlockService } from '../services/block.service';
+import { CommentsComponent } from '../comments/comments.component';
 
 @Component({
   selector: 'app-feed',
@@ -11,6 +15,7 @@ import { PostFeedComponent } from '../post-feed/post-feed.component';
   styleUrls: ['./feed.component.scss']
 })
 export class FeedComponent implements OnInit, OnDestroy {
+
 
   posts: any[] = [];
   postsPerPage = 5;
@@ -20,11 +25,18 @@ export class FeedComponent implements OnInit, OnDestroy {
   loggedInUser: any | undefined;
   isLogedIn:boolean=false;
   totalComments = 0;
-  totalLikes = 0;
-  postId = 1; 
+  totalLikes = 5;
+  postId=1 
+  userId:any 
   startPayment:boolean=false
+  is_premium=false;
 
-  constructor(private postService: PostService,private dialog: MatDialog, private authService: AuthService,) { }
+  constructor(private postService: PostService,
+    private notificationService:NotificationService,
+    private dialog: MatDialog,
+     private authService: AuthService,
+     private blockService: BlockService
+     ) { }
 
 
   
@@ -43,10 +55,7 @@ export class FeedComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.postService.getCommentsForPost(this.postId).subscribe(comments => {
-      this.totalComments = comments.length; 
-      this.totalLikes=5;
-    });
+    
   }
 
 
@@ -59,14 +68,48 @@ export class FeedComponent implements OnInit, OnDestroy {
         this.posts = this.getPostsForPage(this.currentPage, data.slice(0, 20));
       } else if (userAccessLevel === 'premium') {
         this.posts = this.getPostsForPage(this.currentPage, data);
+        this.is_premium=true;
       }
+  
+      // Fetch comments for each post
+      this.posts.forEach(post => {
+        this.postService.getCommentsForPost(post.id).subscribe(comments => {
+          post.comments = comments; 
+          this.totalComments=post.comments.length
+        });
+      });
     });
   }
+  
 
   getPostsForPage(page: number, data: any[]): any[] {
     const startIndex = (page - 1) * this.postsPerPage;
     const endIndex = startIndex + this.postsPerPage;
     return data.slice(startIndex, endIndex);
+  }
+
+  searchPosts(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value.trim();
+    if (searchTerm.length > 0) {
+      const filteredPosts = this.posts.filter(post =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.body.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      this.posts = filteredPosts;
+    } else {
+      this.fetchPosts(this.authService.getUserAccessLevel(this.loggedInUser.id));
+    }
+  }
+  
+  
+
+  isUserBlocked(userId: number): boolean {
+    return this.blockService.isUserBlocked(userId);
+  }
+
+  isPostBlocked(postId: number): boolean {
+    return this.blockService.isPostBlocked(postId);
+
   }
 
   nextPage(): void {
@@ -81,7 +124,7 @@ export class FeedComponent implements OnInit, OnDestroy {
           this.currentPage++;
           this.updateDisplayedPosts();
         } else {
-          alert('Please log in to see more posts.')
+          this.notificationService.showError('Login To see More Posts');
         }
       } else if (userAccessLevel === 'free') {
         if (this.currentPage * this.postsPerPage < 20) {
@@ -89,6 +132,7 @@ export class FeedComponent implements OnInit, OnDestroy {
           this.updateDisplayedPosts();
         } else {
           this.startPayment=true
+          this.notificationService.showError('Upgrade To see More Post');
           // console.log('Payment needed for more posts.');
           // alert('Payment needed for more posts.')
 
@@ -112,9 +156,15 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   updateDisplayedPosts(): void {
     this.postService.getAllPosts().subscribe(posts => {
-      this.posts = this.getPostsForPage(this.currentPage, posts);
+      const filteredPosts = posts.filter(post => {
+        // Check if the post or its user is blocked
+        return !this.isPostBlocked(post.id) && !this.isUserBlocked(post.userId);
+      });
+  
+      this.posts = this.getPostsForPage(this.currentPage, filteredPosts);
     });
   }
+  
   likePost(postId: any) {
     this.totalLikes+=1;
   }
@@ -141,6 +191,53 @@ export class FeedComponent implements OnInit, OnDestroy {
       // Do something on modal close if needed
     });
   }
+
+  openCommentsDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '700px'; // Adjust the width of the modal
+    dialogConfig.maxWidth = '90vw'; // Maximum width
+    dialogConfig.height='50vh';
+    dialogConfig.data = { /* If passing data */ };
+
+    const dialogRef = this.dialog.open(CommentsComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Do something on modal close if needed
+    });
+  }
+  getPostById(postId: number): any {
+    return this.posts.find(post => post.id === postId);
+  }
+  
+
+  openFollowDialog(postId: number, userId: number): void {
+    this.postService.getPostById(postId).subscribe(
+      (selectedPost: any) => {
+        const selectedUserId = selectedPost?.userId;
+  
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.width = '300px';
+        dialogConfig.maxWidth = '30vw';
+        dialogConfig.height = '60vh';
+        dialogConfig.data = { postId: selectedPost?.id, userId: selectedUserId };
+        console.log("data", dialogConfig.data)
+  
+        const dialogRef = this.dialog.open(FollowingComponent, dialogConfig);
+  
+        dialogRef.afterClosed().subscribe(result => {
+          this.updateDisplayedPosts();
+        });
+      },
+      error => {
+        console.error('Error fetching post:', error);
+      }
+    );
+  }
+  
+  
+  
+  
+  
 
   ngOnDestroy(): void {
     if (this.postsSubscription) {

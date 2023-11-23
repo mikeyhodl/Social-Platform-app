@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-post-feed',
@@ -13,7 +14,7 @@ export class PostFeedComponent {
   loggedInUserId: any | undefined;
 postContent: any;
 postTitle: any;
-  constructor(public dialogRef: MatDialogRef<PostFeedComponent>,private snackBar: MatSnackBar,private http:HttpClient ,private authService:AuthService) {}
+  constructor(public dialogRef: MatDialogRef<PostFeedComponent>,private notificationService: NotificationService,private snackBar: MatSnackBar,private http:HttpClient ,private authService:AuthService) {}
 
   ngOnInit(): void {
     this.authService.loggedInUser$.subscribe((user: any) => {
@@ -27,18 +28,15 @@ postTitle: any;
     const newPost = {
       title: postTitle,
       body: postContent,
-      userId: this.loggedInUserId, // Replace this with the actual user ID
+      userId: this.loggedInUserId, 
     };
   
     this.http.post('https://jsonplaceholder.typicode.com/posts', newPost)
       .subscribe((response: any) => {
-        this.snackBar.open('Post submitted successfully!', 'Close', {
-          duration: 3000, // Duration in milliseconds
-          horizontalPosition: 'center', // Positioning the toast message
-          verticalPosition: 'bottom',
-        });        this.dialogRef.close();
+        this.notificationService.showSuccess('Posted');
+         this.dialogRef.close();
       }, (error: any) => {
-        console.error('Error adding post:', error);
+        this.notificationService.showError('Failed');
       });
   }
   

@@ -1,0 +1,35 @@
+/* followers.component.scss */
+
+.user-list {
+    display: flex;
+    flex-direction: column;
+  align-items: center;
+  width: 70%;
+  height: 100vh;
+  
+    ul {
+      list-style: none;
+      padding: 0;
+  
+      li {
+        margin-bottom: 10px;
+  
+        a {
+          color: #333;
+          text-decoration: none;
+          transition: color 0.3s; /* Transition color change over 0.3 seconds */
+  
+          &:hover {
+            color: blue;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+   .cardd{
+    margin-left: 25%;
+   }
+  
+
+  }
+  

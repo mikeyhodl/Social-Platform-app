@@ -10,4 +10,8 @@
     height: 100%;
     object-fit: cover; /* Maintains aspect ratio while covering the area */
   }
-  
+  .profile-users{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }

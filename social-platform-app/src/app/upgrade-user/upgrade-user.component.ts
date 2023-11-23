@@ -40,6 +40,7 @@ export class UpgradeUserComponent implements OnInit {
             // If payment was successful, add user to premium users
             if (order.status === 'COMPLETED' && user && user.id) {
               this.authService.addToPremiumUsers(user.id);
+          
             }
           },
         })
