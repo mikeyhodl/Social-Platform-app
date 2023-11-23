@@ -13,7 +13,7 @@ export class AuthService {
   loggedInUser: any | undefined; // Store logged-in user information
   private loggedInUserSubject: BehaviorSubject<any | null> = new BehaviorSubject<any | null>(null);
   loggedInUser$: Observable<any | null> = this.loggedInUserSubject.asObservable();
-
+  private isAuthenticated = false;
 
 
   constructor(private http: HttpClient) { }
@@ -22,18 +22,27 @@ export class AuthService {
   login(usernameOrEmail: string, password: string) {
     return this.http.get<any[]>(this.apiUrl).pipe(
       map((users: any[]) => {
+        this.logedIn();
         const userFound = users.find((user: any) =>
           (user.username === usernameOrEmail || user.email === usernameOrEmail) && user.address.zipcode === password
         );
 
         if (userFound) {
-          this.loggedInUserSubject.next(userFound); // Emit the logged-in user's information
+          this.loggedInUserSubject.next(userFound);
           return true;
+         
         }
+        
 
         return false;
       })
     );
+  }
+  logedIn(){
+    this.isAuthenticated = true;
+  }
+  isLoggedIn(): boolean {
+    return this.isAuthenticated;
   }
   
 
@@ -51,7 +60,6 @@ export class AuthService {
   }
   
 
-  // Methods to modify user access levels (if required in the future)
   addToFreeUsers(userId: number): void {
     if (!this.freeUserIds.includes(userId)) {
       this.freeUserIds.push(userId);

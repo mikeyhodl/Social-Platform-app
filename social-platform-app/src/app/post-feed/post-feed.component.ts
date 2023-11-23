@@ -28,7 +28,7 @@ postTitle: any;
     const newPost = {
       title: postTitle,
       body: postContent,
-      userId: this.loggedInUserId, // Replace this with the actual user ID
+      userId: this.loggedInUserId, 
     };
   
     this.http.post('https://jsonplaceholder.typicode.com/posts', newPost)

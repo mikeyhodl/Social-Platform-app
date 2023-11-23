@@ -1,9 +1,19 @@
 <div class="container">
     <h2>User Profile</h2>
     <div class="profile-details">
-    <div class="profile-picture">
+     <div class="profile-users">
+      <div class="profile-picture">
         <img [src]="userProfile.profilePicture" alt="Profile Picture">
+     </div>
+      <div  style="height: 25vh;">
+        <h3 style="font-weight:bold ;">Your Followers</h3>
+      <div *ngFor="let user of users">
+        <h3>{{user.name}}</h3>
+       </div>
       </div>
+     </div>
+      </div>
+    
     <div>
       <p><strong>Name:</strong> {{ userProfile.name }}</p>
       <p><strong>Email:</strong> {{ userProfile.email }}</p>
@@ -11,8 +21,7 @@
       <p><strong>company:</strong> {{ userProfile.company}}</p>
       <p><strong>website:</strong> {{ userProfile.website }}</p>
     </div>
-    </div>
-   <!-- User's posts -->
+   
   <div *ngIf="userPosts.length > 0">
     <h3>My Posts</h3>
     <div *ngFor="let post of userPosts" class="card mt-3">

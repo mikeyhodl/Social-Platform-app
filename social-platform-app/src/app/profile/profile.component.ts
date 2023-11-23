@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { PostService } from '../services/post.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -8,16 +9,17 @@ import { PostService } from '../services/post.service';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent {
-  userProfile: any = {}; // Placeholder for user profile data
-  userPosts: any[] = []; // Placeholder for user's posts
+  userProfile: any = {};
+  userPosts: any[] = [];
   totalComments = 0;
   postId:any
   profileBackgroundColor: string = '';
+  users:any[]=[];
 
 
 
 
-  constructor(private authService:AuthService,private postService:PostService) { }
+  constructor(private authService:AuthService,private postService:PostService,private userService: UserService) { }
 
   ngOnInit(): void {
     this.authService.loggedInUser$.subscribe((user: any) => {
@@ -36,9 +38,12 @@ export class ProfileComponent {
           this.userPosts = posts.filter(post => post.userId === user.id);
         });
         this.postService.getCommentsForPost(user.id).subscribe(comments => {
-          this.totalComments = comments.length; // Get the number of comments
+          this.totalComments = comments.length; 
         });
       } 
+    });
+    this.userService.getAllUsers().subscribe((users: any[]) => {
+      this.users=users;
     });
   }
   
@@ -49,10 +54,9 @@ export class ProfileComponent {
   }
 
   generateRandomColor(seed: string): string {
-    // Use a hashing function to generate a unique color based on the user's name or email
     const hashCode = seed.split('').reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0);
     const color = (hashCode & 0x00FFFFFF).toString(16).toUpperCase();
-    return '00000'.substring(0, 6 - color.length) + color; // Pad the color string if needed
+    return '00000'.substring(0, 6 - color.length) + color;
   }
 
 }

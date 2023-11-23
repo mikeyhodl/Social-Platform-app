@@ -1,0 +1,16 @@
+/* following.component.scss */
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center; 
+    margin-top: 20px; 
+  }
+  
+  .button-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: fit-content;
+  }
+  

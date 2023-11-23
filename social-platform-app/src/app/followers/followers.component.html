@@ -1,0 +1,36 @@
+
+<!-- followers.component.html -->
+
+
+
+<div class="user-list">
+    <h2>Your Followers Lists</h2>
+  <ul>
+    <li *ngFor="let user of users">
+     
+      <a (click)="viewUserPosts(user.id)">{{ user.name }}</a>
+    </li>
+  </ul>
+  <div class="cardd" *ngIf="userPosts.length > 0">
+    <h3>User's Posts</h3>
+    <div *ngFor="let post of userPosts" class="card mt-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text">{{ post.body }}</p>
+        <p class="card-subtitle text-muted">Posted by User ID: {{ post.userId }}</p>
+        <div class="post-interactions">
+            <button class="btn btn-link like-button"  title="Like">
+              <i class="fas fa-heart"></i> 5
+            </button>
+         
+            <button (click)="openCommentsDialog()" class="btn btn-link comment-button" title="Comment">
+              <i class="fas fa-comment"></i> {{totalComments}}
+            </button>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="userPosts.length === 0">
+    <p>Click Follower Name to See There Posts</p>
+  </div>
+</div>

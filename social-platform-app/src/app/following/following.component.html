@@ -1,1 +1,20 @@
-<p>following works!</p>
+
+<div class="column">
+  <!-- Follow/Unfollow button -->
+  <button mat-icon-button (click)="toggleFollow()" class="button-row">
+    <mat-icon>{{ isFollowing ? 'done' : 'person_add' }}</mat-icon>
+    <span>{{ isFollowing ? 'Unfollow' : 'Follow' }}</span>
+  </button>
+
+  <!-- Block user button -->
+  <button mat-icon-button (click)="blockUser(userId)" class="button-row">
+    <mat-icon>block</mat-icon>
+    <span>Block User</span>
+  </button>
+
+  <!-- Block post button -->
+  <button mat-icon-button (click)="blockPost(postId)" class="button-row">
+    <mat-icon>block</mat-icon>
+    <span>Block Post</span>
+  </button>
+</div>

@@ -1,14 +1,20 @@
 <div class="container mt-5">
-    <h2>Feed</h2>
-     <!-- Upgrade User Modal -->
+  <h1 style="display: flex; justify-content: center;">Social Platform Application</h1>
+  <div *ngIf="isLogedIn" class="Tabs">
+    <button routerLink="/profile">
+      <i class="fas fa-user"></i> Profile
+    </button>
+    <button routerLink="/following">Following</button>
+  </div>
+  <h2 style="display: flex; justify-content: center;">Feed</h2>
+  <div class="search-bar mt-3">
+    <input type="text" class="form-control" placeholder="Search..." (input)="searchPosts($event)">
+  </div>
   <div *ngIf="startPayment">
     <div>
-      <div >
-      
-        <!-- Toggle visibility based on startPayment -->
-        <div *ngIf="startPayment" >
+      <div>
+        <div *ngIf="startPayment">
           <div #paymentRef>
-            <!-- Additional content for upgrade -->
             <h3>Upgrade to Premium</h3>
             <p>Unlock exclusive features with our premium subscription By paying only $20:</p>
             <ul style="font-style: italic;">
@@ -18,58 +24,47 @@
             </ul>
             <app-upgrade-user></app-upgrade-user>
           </div>
-          <!-- Cancel button -->
           <button class="btn btn-secondary" (click)="cancelUpgrade()">Cancel</button>
         </div>
       </div>
     </div>
   </div>
-    <!-- Login button -->
-    <div *ngIf="!isLogedIn" class="login-button" style="position: absolute; top: 20px; right: 20px;">
-      <button class="btn btn-primary" routerLink="/login">Login</button>
-      
-     </div>
-     
-    <!-- Logout button -->
-    <div *ngIf="isLogedIn" class="login-button" style="position: absolute; top: 20px; right: 20px;">
-      <button class="btn btn-primary" routerLink="/feed" (click)="logut()">Logout</button>
-      <a routerLink="/profile">
-        <i class="fas fa-user"></i>Profile
-      </a>
-    </div>
-    <!-- Posts loop -->
-   <div  *ngIf="!startPayment" >
-    <div  *ngFor="let post of posts" class="card mt-3">
-        <!-- Card content -->
-        <div class="card-body">
+  <div *ngIf="!isLogedIn" class="login-button" style="position: absolute; top: 20px; right: 20px;">
+    <button class="btn btn-primary" routerLink="/login">Login</button>
+  </div>
+  <div *ngIf="isLogedIn" class="login-button" style="position: absolute; top: 20px; right: 20px;">
+    <button class="btn btn-primary" routerLink="/feed" (click)="logut()">Logout</button>
+  </div>
+  <div *ngIf="!startPayment">
+    <div *ngFor="let post of posts" class="card mt-3">
+      <div class="card-body">
+        <div class="cards">
           <p class="card-subtitle text-muted">Posted by User ID: {{ post.userId }}</p>
-          <h5 class="card-title">{{ post.title }}</h5>
-          <p class="card-text">{{ post.body }}</p>
-          <!-- Like and Comment buttons -->
-          <div class="post-interactions">
-            <!-- Like button -->
-            <button class="btn btn-link like-button" (click)="likePost(post.id)" title="Like">
-              <i class="fas fa-heart"></i> {{totalLikes}}
-            </button>
-            <!-- Comment button -->
-            <button class="btn btn-link comment-button" (click)="commentOnPost(post.id)" title="Comment">
-              <i class="fas fa-comment"></i> {{totalComments}}
-            </button>
-          </div>
+          <button *ngIf="is_premium" (click)="openFollowDialog(post.id, post.userId)">
+            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+          </button>
+        </div>
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text">{{ post.body }}</p>
+        <div class="post-interactions">
+          <button class="btn btn-link like-button" (click)="likePost(post.id)" title="Like">
+            <i class="fas fa-heart"></i> {{ totalLikes }}
+          </button>
+          <button class="btn btn-link comment-button" (click)="openCommentsDialog()" title="Comment">
+            <i class="fas fa-comment"></i> {{ totalComments }}
+          </button>
         </div>
       </div>
-      <!-- Navigation buttons -->
-      <div class="mt-3 actions">
-        <div>
-          <button class="btn btn-primary" (click)="openPostDialog()">Post New Feed</button>
-        </div>
-        <div>
+    </div>
+    <div class="mt-3 actions">
+      <div *ngIf="isLogedIn">
+        <button class="btn btn-primary" (click)="openPostDialog()">Post New Feed</button>
+      </div>
+      <div>
         <button class="btn btn-primary" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
         <button class="btn btn-primary" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
       </div>
     </div>
-   </div>
-   
   </div>
-  
+</div>
